@@ -1,0 +1,68 @@
+---
+title: "Reproducible Pitch For my App"
+author: "Noble Prince"
+date: "11/5/2020 (MM/DD/YYYY)"
+output:
+  
+  ioslides_presentation: default
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+The following presentation and the shiny app is part of the coursera project under the course developing data products.
+This presentation is a reproducible pitch for the shiny app created which you can check the files for in the repository. This app is a simple distribution plotter app using random numbers and user input characteristics.
+
+## Shiny Package and It's use
+
+Shiny is a Web Application Framework for R. It is an incredibly easy to use package to build interactive and real time web apps with R.
+For more details refer: http://127.0.0.1:16275/help/library/shiny/help/shiny-options
+And for useful tips and tutorials on it refer: http://shiny.rstudio.com/tutorial/
+
+Coming to the app for plotting distributions, it is a user friendly app incorporates submit button for easy understanding and produces plots with the help of user input values.
+
+## My App
+
+My app uses general tools of shiny package to produce an useful and interactive plot
+Check out the following R snippet for the UI part
+```{r, echo=TRUE, eval=FALSE}
+library(shiny)
+shinyUI(fluidPage(titlePanel("Distribution Plots using Random Numbers"),
+sidebarLayout( sidebarPanel(selectInput("Distribution", "Select the Type of Distribution",
+                        choices = c("Exponential","Normal")),
+sliderInput("Number of Variables","Pick the sample size number to plot the values",
+            100,3000,value = 500,step = 100),
+conditionalPanel(condition = "input.Distribution == 'Normal'",
+                textInput("Mean", "Select the mean", 5),
+                textInput("Standard Deviation", "Select the SD",2)),
+conditionalPanel(condition = "input.Distribution == 'Exponential'",
+                textInput("lambda", "Select Exponential Lambda", 1)),
+h5("Please press on 'Submit button' every time you change the input values"),
+submitButton("Plot")),
+        mainPanel(
+            plotOutput("thePlot")))))
+```
+
+## My App contd..
+This slide contains the snippet for server part. Both are simple and self explanatory if you know little basics of html and shiny package.
+```{r, echo=TRUE, eval=FALSE}
+library(shiny)
+shinyServer(function(input, output) {
+  output$thePlot <- renderPlot({
+      distType <- input$Distribution
+      size <- input$`Number of Variables`
+      if(distType == "Normal"){
+        Vector <- rnorm(size, mean = as.numeric(input$Mean),sd = as.numeric(input$`Standard Deviation`))
+        }
+      if(distType == "Exponential"){
+        Vector <- rexp(size, rate = 1/as.numeric(input$lambda))}
+      hist(Vector, col = "green")})})
+```
+
+
+
+
